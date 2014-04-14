@@ -15,6 +15,15 @@ class StackLoader extends Twig_Loader_Filesystem
      * @var string
      */
     protected $defaultSuffix = 'twig';
+	
+	/**
+     * Available suffixes to use
+     *
+     * Available template extensions.
+     *
+     * @var string
+     */
+	protected $availableSuffixes = array( 'twig', 'css', 'html', 'txt' );
 
     /**
      * Set default file suffix
@@ -28,6 +37,33 @@ class StackLoader extends Twig_Loader_Filesystem
         $this->defaultSuffix = ltrim($this->defaultSuffix, '.');
         return $this;
     }
+	
+
+
+    /**
+     * Get available file suffixes
+     *
+     * @return array
+     */
+    public function getAvailableSuffixes()
+    {
+        return $this->availableSuffixes;
+    }
+
+	
+	/**
+     * Set available file suffixes
+     *
+     * @param  array $availableSuffixes
+     * @return StackLoader
+     */
+    public function setAvailableSuffixes($availableSuffixes)
+    {
+        $this->availableSuffixes = $availableSuffixes;
+        return $this;
+    }
+	
+
 
     /**
      * Get default file suffix
@@ -38,7 +74,10 @@ class StackLoader extends Twig_Loader_Filesystem
     {
         return $this->defaultSuffix;
     }
-
+	
+	
+	
+	
     protected function findTemplate($name)
     {
         $name = (string) $name;
@@ -52,10 +91,11 @@ class StackLoader extends Twig_Loader_Filesystem
 
         // Ensure we have the expected file extension
         $defaultSuffix = $this->getDefaultSuffix();
-        if (pathinfo($name, PATHINFO_EXTENSION) != $defaultSuffix) {;
+		
+		$suffix = pathinfo($name, PATHINFO_EXTENSION);
+        if ( !in_array($suffix, $this->availableSuffixes ) ){
             $name .= '.' . $defaultSuffix;
         }
-
         $this->validateName($name);
 
         $namespace = '__main__';
